@@ -5,11 +5,15 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.PixelFormat;
 import android.graphics.Point;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Display;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
 
 public class GameActivity extends AppCompatActivity {
 
@@ -27,7 +31,7 @@ public class GameActivity extends AppCompatActivity {
         //Initializing game view object
         //this time we are also passing the screen size to the GameView constructor
         gameView = new GameView(this, size.x, size.y);
-        //adding it to contentview
+
         setContentView(gameView);
     }
     //pausing the game when activity is paused
@@ -51,7 +55,7 @@ public class GameActivity extends AppCompatActivity {
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
 
-                        //GameView.stopMusic();
+                        GameView.stopSoundOn();
                         Intent startMain = new Intent(Intent.ACTION_MAIN);
                         startMain.addCategory(Intent.CATEGORY_HOME);
                         startMain.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

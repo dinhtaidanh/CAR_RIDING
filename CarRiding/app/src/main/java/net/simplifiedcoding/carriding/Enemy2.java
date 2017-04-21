@@ -10,7 +10,7 @@ public class Enemy2 {
     private Bitmap bitmap;
     private int x;//hoanh do cua enemy
     private int y;//tung do cua enemy
-    private double speed = 10;
+    private int speed = 10;
 
     private int maxX;//chieu rong man hinh
     //private int minX;
@@ -25,7 +25,7 @@ public class Enemy2 {
         maxX = screenX;
         maxY = screenY;
         //minX = 0;
-        minY = 0;
+        minY = -bitmap.getHeight();
         Random generator = new Random();
         x = generator.nextInt(maxX - bitmap.getWidth());
         y = minY;
@@ -44,8 +44,8 @@ public class Enemy2 {
         }
 
         //Adding the top, left, bottom and right to the rect object
-        detectCollision.left = x;
-        detectCollision.top = y;
+        detectCollision.left = x ;
+        detectCollision.top = y + bitmap.getHeight()/2;
         detectCollision.right = x + bitmap.getWidth();
         detectCollision.bottom = y + bitmap.getHeight();
     }
@@ -73,7 +73,7 @@ public class Enemy2 {
         return y;
     }
 
-    public double getSpeed() {
+    public int getSpeed() {
         return speed;
     }
     public void IncreaseSpeed() { speed=speed+1;}

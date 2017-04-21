@@ -18,13 +18,6 @@ public class Boom {
         //getting boom image from drawable resource
         bitmap = BitmapFactory.decodeResource
                 (context.getResources(), R.drawable.boom);
-
-        //setting the coordinate outside the screen
-        //so that it won't shown up in the screen
-        //it will be only visible for a fraction of second
-        //after collission
-        x = -250;
-        y = -250;
     }
 
     //setters for x and y to make it visible at the place of collision

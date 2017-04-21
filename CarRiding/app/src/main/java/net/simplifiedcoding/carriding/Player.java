@@ -23,14 +23,14 @@ public class Player {
     private Rect detectCollision;
 
     public Player(Context context, int screenX, int screenY) {
-        x = 0;
-        y = 1500;
+
         speed = 1;
         bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.car_player);
         maxX = screenX - bitmap.getWidth();
         minX = 0;
         boosting = false;
-
+        x = 0;
+        y = screenY - this.getBitmap().getHeight();
         //initializing rect object
         detectCollision =  new Rect(x, y, bitmap.getWidth(), bitmap.getHeight());
     }
@@ -68,7 +68,7 @@ public class Player {
 
         //adding top, left, bottom and right to the rect object
         detectCollision.left = x;
-        detectCollision.top = y;
+        detectCollision.top = y + bitmap.getHeight()/2;
         detectCollision.right = x + bitmap.getWidth();
         detectCollision.bottom = y + bitmap.getHeight();
 

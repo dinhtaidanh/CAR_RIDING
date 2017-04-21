@@ -11,13 +11,13 @@
     android:background="@drawable/car_wallpapers">
 
     <TextView
-        android:textAlignment="center"
-        android:textColor="@android:color/white"
+        android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:textSize="30dp"
-        android:id="@+id/textView" />
+        android:textAlignment="center"
+        android:textColor="@android:color/white"
+        android:textSize="30dp" />
 
     <TextView
         android:textColor="@android:color/white"

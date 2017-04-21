@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.media.AudioAttributes;
@@ -14,6 +15,7 @@ import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.SoundPool;
 import android.os.Build;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -25,9 +27,11 @@ import static android.content.Context.AUDIO_SERVICE;
 
 
 public class GameView extends SurfaceView implements Runnable {
-    MediaPlayer gameOn, killedEnemy;
+    static MediaPlayer gameOn, killedEnemy;
 
-    Bitmap bmp;
+    Bitmap bmpOver, bmpGround;
+    Background background,background2,background3;
+
     volatile boolean playing;
     private Thread gameThread = null;
     private Player player;
@@ -41,6 +45,7 @@ public class GameView extends SurfaceView implements Runnable {
     private Boom boom;
     //a screenX holder
     int screenX;
+    int screenY;
     //to count the number of Misses
     int countMisses;
     //indicator that the enemy has just entered the game screen
@@ -57,10 +62,18 @@ public class GameView extends SurfaceView implements Runnable {
     Context context;
     public GameView(Context context, int screenX, int screenY) {
         super(context);
+        bmpOver = BitmapFactory.decodeResource(getResources(),R.drawable.game_over);
+        bmpGround = BitmapFactory.decodeResource(getResources(),R.drawable.race_ground);
+        bmpGround = getResizedBitmap(bmpGround,screenX,screenY);
+
         gameOn = MediaPlayer.create(context,R.raw.gameon);
         gameOn.setLooping(true);
         killedEnemy = MediaPlayer.create(context,R.raw.killedenemy);
-        bmp = BitmapFactory.decodeResource(getResources(),R.drawable.racetrack);
+
+        background = new Background(context,0);
+        background.setBitmap(getResizedBitmap(background.getBitmap(),screenX,screenY));
+        background2 = new Background(context,-screenY);
+        background2.setBitmap(getResizedBitmap(background2.getBitmap(),screenX,screenY));
 
         player = new Player(context, screenX, screenY);
         surfaceHolder = getHolder();
@@ -71,6 +84,7 @@ public class GameView extends SurfaceView implements Runnable {
         //initializing boom object
         boom = new Boom(context);
         this.screenX = screenX;
+        this.screenY = screenY;
         isGameOver = false;
         //setting the score to 0 initially
         score = 0;
@@ -84,6 +98,7 @@ public class GameView extends SurfaceView implements Runnable {
         //starting the game music as the game starts
         gameOn.start();
         //initializing context
+
         this.context = context;
     }
 
@@ -114,6 +129,8 @@ public class GameView extends SurfaceView implements Runnable {
         gameThread = new Thread(this);
         gameThread.start();
     }
+
+
     @Override
     public boolean onTouchEvent(MotionEvent motionEvent) {
         switch (motionEvent.getAction() & MotionEvent.ACTION_MASK) {
@@ -132,6 +149,7 @@ public class GameView extends SurfaceView implements Runnable {
         }
         return true;
     }
+
     private void update() {
         //incrementing score as time passes
         score++;
@@ -142,8 +160,8 @@ public class GameView extends SurfaceView implements Runnable {
         }
         player.update();
         //setting boom outside the screen
-        boom.setX(-250);
-        boom.setY(-250);
+        boom.setX(-screenX);
+        boom.setY(-screenY);
         //setting the flag true when the enemy just enters the screen
         if(enemies1.getX()==screenX){
             flag = true;
@@ -157,8 +175,8 @@ public class GameView extends SurfaceView implements Runnable {
         if (Rect.intersects(player.getDetectCollision(), enemies1.getDetectCollision()) ||
                 Rect.intersects(player.getDetectCollision(), enemies2.getDetectCollision())) {
             if(Rect.intersects(player.getDetectCollision(), enemies1.getDetectCollision())){//displaying boom at that location
-            boom.setX(enemies1.getX());
-            boom.setY(enemies1.getY());}
+            boom.setX(player.getX());
+            boom.setY(player.getY());}
             if(Rect.intersects(player.getDetectCollision(), enemies2.getDetectCollision())){
             boom.setX(enemies2.getX());
             boom.setY(enemies2.getY());}
@@ -198,47 +216,49 @@ public class GameView extends SurfaceView implements Runnable {
             paint.setTextSize(20);
             //drawing the score on the game screen
             paint.setTextSize(30);
+
+            canvas.drawBitmap(bmpGround,0,0,null);
+            canvas.drawBitmap(background.getBitmap(),0,background.update(screenY,enemies1.getSpeed()),null);
+            canvas.drawBitmap(background2.getBitmap(),0,background2.update(screenY,enemies1.getSpeed()),null);
+
             canvas.drawText("Score:"+score,100,50,paint);
-            canvas.drawBitmap(
-                    player.getBitmap(),
-                    player.getX(),
-                    player.getY(),
-                    paint);
+            canvas.drawBitmap(player.getBitmap(), player.getX(), player.getY(), paint);
 
-
-            canvas.drawBitmap(
-                    enemies1.getBitmap(),
-                    enemies1.getX(),
-                    enemies1.getY(),
-                    paint
-            );
-            canvas.drawBitmap(
-                    enemies2.getBitmap(),
-                    enemies2.getX(),
-                    enemies2.getY(),
-                    paint
-            );
+            canvas.drawBitmap(enemies1.getBitmap(), enemies1.getX(), enemies1.getY(), paint);
+            canvas.drawBitmap(enemies2.getBitmap(), enemies2.getX(), enemies2.getY(), paint);
             //drawing boom image
-            canvas.drawBitmap(
-                    boom.getBitmap(),
-                    boom.getX(),
-                    boom.getY(),
-                    paint
-            );
+            canvas.drawBitmap(boom.getBitmap(), boom.getX(), boom.getY(), paint);
             //draw game Over when the game is over
             if(isGameOver){
-                paint.setTextSize(150);
-                paint.setTextAlign(Paint.Align.CENTER);
-
-                int yPos=(int) ((canvas.getHeight() / 2) - ((paint.descent() + paint.ascent()) / 2));
-                canvas.drawText("Game Over",canvas.getWidth()/2,yPos,paint);
+                //int yPos=(int) ((canvas.getHeight() / 2) - ((paint.descent() + paint.ascent()) / 2));
+                //canvas.drawBitmap(bmpOver,canvas.getWidth()/2,yPos,null);
+                canvas.drawBitmap(bmpOver,(screenX  - bmpOver.getWidth()) * 0.5f,(screenY  - bmpOver.getHeight()) * 0.5f,null);
             }
             surfaceHolder.unlockCanvasAndPost(canvas);
         }
     }
-    public void stopGameon()
+    public static void stopSoundOn()
     {
-        gameOn.stop();
+            if(gameOn!= null) {
+                gameOn.stop();
+                gameOn = null;
+            }
+    }
+    public Bitmap getResizedBitmap(Bitmap bm, int newWidth, int newHeight) {
+        int width = bm.getWidth();
+        int height = bm.getHeight();
+        float scaleWidth = ((float) newWidth) / width;
+        float scaleHeight = ((float) newHeight) / height;
+        // CREATE A MATRIX FOR THE MANIPULATION
+        Matrix matrix = new Matrix();
+        // RESIZE THE BIT MAP
+        matrix.postScale(scaleWidth, scaleHeight);
+
+        // "RECREATE" THE NEW BITMAP
+        Bitmap resizedBitmap = Bitmap.createBitmap(
+                bm, 0, 0, width, height, matrix, false);
+        bm.recycle();
+        return resizedBitmap;
     }
 
 }
