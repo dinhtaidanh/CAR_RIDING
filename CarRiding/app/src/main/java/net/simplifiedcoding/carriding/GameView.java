@@ -1,6 +1,7 @@
 package net.simplifiedcoding.carriding;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -15,6 +16,7 @@ import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.SoundPool;
 import android.os.Build;
+import android.support.v7.app.AlertDialog;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
@@ -130,7 +132,6 @@ public class GameView extends SurfaceView implements Runnable {
         gameThread.start();
     }
 
-
     @Override
     public boolean onTouchEvent(MotionEvent motionEvent) {
         switch (motionEvent.getAction() & MotionEvent.ACTION_MASK) {
@@ -143,11 +144,16 @@ public class GameView extends SurfaceView implements Runnable {
         }
         //if the game's over, tappin on game Over screen sends you to MainActivity
         if(isGameOver){
-            if(motionEvent.getAction()==MotionEvent.ACTION_DOWN){
-                context.startActivity(new Intent(context,MainActivity.class));
-            }
+            if(motionEvent.getAction()==MotionEvent.ACTION_DOWN )
+                   {
+                       stopSoundOn();
+                       context.startActivity(new Intent(context,MainActivity.class));
+                   }
+
+
         }
         return true;
+
     }
 
     private void update() {

@@ -47,19 +47,17 @@ public class GameActivity extends AppCompatActivity {
         super.onResume();
         gameView.resume();
     }
+
     @Override
     public void onBackPressed() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage("Are you sure you want to exit?")
+        builder.setMessage("Return to main screen?")
                 .setCancelable(false)
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
 
-                        GameView.stopSoundOn();
-                        Intent startMain = new Intent(Intent.ACTION_MAIN);
-                        startMain.addCategory(Intent.CATEGORY_HOME);
-                        startMain.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        startActivity(startMain);
+                        gameView.stopSoundOn();
+                        startActivity(new Intent(getApplicationContext(),MainActivity.class));
                         finish();
                     }
                 })
@@ -72,4 +70,5 @@ public class GameActivity extends AppCompatActivity {
         alert.show();
 
     }
+
 }
