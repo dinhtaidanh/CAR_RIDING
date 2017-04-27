@@ -22,6 +22,7 @@ import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
+import android.widget.Toast;
 
 import java.util.Timer;
 
@@ -53,7 +54,7 @@ public class GameView extends SurfaceView implements Runnable {
     //indicator that the enemy has just entered the game screen
     boolean flag ;
     //an indicator if the game is Over
-    private boolean isGameOver ;
+    public static boolean isGameOver ;
     //the score holder
     int score;
     //the high Scores Holder
@@ -121,15 +122,19 @@ public class GameView extends SurfaceView implements Runnable {
     }
     public void pause() {
         playing = false;
+        gameOn.pause();
         try {
             gameThread.join();
         } catch (InterruptedException e) {
         }
     }
     public void resume() {
-        playing = true;
-        gameThread = new Thread(this);
-        gameThread.start();
+        if(!isGameOver) {
+            gameOn.start();
+            playing = true;
+            gameThread = new Thread(this);
+            gameThread.start();
+        }
     }
 
     @Override
@@ -144,16 +149,15 @@ public class GameView extends SurfaceView implements Runnable {
         }
         //if the game's over, tappin on game Over screen sends you to MainActivity
         if(isGameOver){
+            //pause();
             if(motionEvent.getAction()==MotionEvent.ACTION_DOWN )
                    {
-                       stopSoundOn();
                        context.startActivity(new Intent(context,MainActivity.class));
                    }
 
 
         }
-        return true;
-
+    return true;
     }
 
     private void update() {

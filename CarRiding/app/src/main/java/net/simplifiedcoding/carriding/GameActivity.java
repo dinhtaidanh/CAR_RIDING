@@ -50,19 +50,22 @@ public class GameActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
+        //super.onBackPressed();
+        gameView.pause();
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage("Return to main screen?")
+        builder.setMessage("Quay lại màn hình chính?")
                 .setCancelable(false)
-                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                .setPositiveButton("Đồng ý", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
 
-                        gameView.stopSoundOn();
                         startActivity(new Intent(getApplicationContext(),MainActivity.class));
                         finish();
                     }
                 })
-                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                .setNegativeButton("Hủy", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
+                        if(!gameView.isGameOver)
+                            gameView.resume();
                         dialog.cancel();
                     }
                 });

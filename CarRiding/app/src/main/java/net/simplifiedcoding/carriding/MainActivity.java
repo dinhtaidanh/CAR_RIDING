@@ -45,22 +45,22 @@ public class MainActivity extends Activity implements View.OnClickListener {
     }
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
+        //super.onBackPressed();
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage("Are you sure you want to exit?")
+        builder.setMessage("Bạn muốn thoát?")
                 .setCancelable(false)
-                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                .setPositiveButton("Đồng ý", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        GameView.stopSoundOn();
-
+                        //GameView.stopSoundOn();
                         Intent startMain = new Intent(Intent.ACTION_MAIN);
                         startMain.addCategory(Intent.CATEGORY_HOME);
-                        startMain.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startMain.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(startMain);
                         finish();
+                        System.exit(0);
                     }
                 })
-                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                .setNegativeButton("Hủy", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         dialog.cancel();
                     }
