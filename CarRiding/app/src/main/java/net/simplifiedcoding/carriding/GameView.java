@@ -58,7 +58,7 @@ public class GameView extends SurfaceView implements Runnable {
     //the score holder
     int score;
     //the high Scores Holder
-    int highScore[] = new int[4];
+    int highScore[] = new int[5];
     //Shared Prefernces to store the High Scores
     SharedPreferences sharedPreferences;
     //the mediaplayer objects to configure the background music
@@ -135,6 +135,9 @@ public class GameView extends SurfaceView implements Runnable {
             gameThread = new Thread(this);
             gameThread.start();
         }
+        else {
+            context.startActivity(new Intent(context,MainActivity.class));
+        }
     }
 
     @Override
@@ -149,13 +152,10 @@ public class GameView extends SurfaceView implements Runnable {
         }
         //if the game's over, tappin on game Over screen sends you to MainActivity
         if(isGameOver){
-            //pause();
             if(motionEvent.getAction()==MotionEvent.ACTION_DOWN )
                    {
                        context.startActivity(new Intent(context,MainActivity.class));
                    }
-
-
         }
     return true;
     }
@@ -200,11 +200,10 @@ public class GameView extends SurfaceView implements Runnable {
             gameOn.stop();
             //play the game over sound
             //Assigning the scores to the highscore integer array
-            for(int i=0;i<4;i++){
-                if(highScore[i]<score){
-                    final int finalI = i;
-                    highScore[i] = score;
-                    break;
+            for(int i=3;i>=0;i--){
+                if(score > highScore[i]){
+                    highScore[i+1] = highScore[i];
+                    highScore[i]=score;}
                 }
             }
             //storing the scores through shared Preferences
@@ -216,7 +215,7 @@ public class GameView extends SurfaceView implements Runnable {
                 e.putInt("score"+j,highScore[i]);
             }
             e.apply();
-        }
+
     }
     private void draw() {
         if (surfaceHolder.getSurface().isValid()) {
