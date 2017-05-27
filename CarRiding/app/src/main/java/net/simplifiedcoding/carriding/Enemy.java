@@ -17,17 +17,14 @@ public class Enemy {
 
     private int maxY;//chieu cao man hinh
     private int minY;
-    //creating a rect object
     private Rect detectCollision;
 
     public Enemy(Context context, int screenX, int screenY) {
         bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.car_enemy);
         maxX = screenX;
         maxY = screenY;
-        //minX = 0;
-        minY = -screenY;
-        Random generator = new Random();
-        x = generator.nextInt(maxX - bitmap.getWidth());
+        minY = -bitmap.getHeight();
+        x = maxX/4-bitmap.getWidth();
         y = minY;
         //initializing rect object
         detectCollision = new Rect(x, y, bitmap.getWidth(), bitmap.getHeight());
@@ -37,9 +34,7 @@ public class Enemy {
 
         y += speed;
         if (y > maxY) {
-            Random generator = new Random();
-            //speed = generator.nextInt(10) + 10;
-            x = generator.nextInt(maxX - bitmap.getWidth());
+            x = maxX/4-bitmap.getWidth();
             y = minY;
         }
 

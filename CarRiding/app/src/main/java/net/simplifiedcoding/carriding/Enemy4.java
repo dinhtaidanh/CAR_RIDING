@@ -6,7 +6,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Rect;
 import java.util.Random;
 
-public class Enemy2 {
+public class Enemy4 {
     private Bitmap bitmap;
     private int x;//hoanh do cua enemy
     private int y;//tung do cua enemy
@@ -20,12 +20,12 @@ public class Enemy2 {
     //creating a rect object
     private Rect detectCollision;
 
-    public Enemy2(Context context, int screenX, int screenY) {
+    public Enemy4(Context context, int screenX, int screenY) {
         bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.blue_car);
         maxX = screenX;
         maxY = screenY;
-        minY = -bitmap.getHeight();
-        x = maxX/2+bitmap.getWidth()/2;
+        minY = -maxY/2-2*bitmap.getHeight();
+        x = maxX-bitmap.getWidth();
         y = minY;
         detectCollision = new Rect(x, y, bitmap.getWidth(), bitmap.getHeight());
     }
@@ -34,28 +34,24 @@ public class Enemy2 {
 
         y += speed;
         if (y > maxY) {
-            x =maxX/2+bitmap.getWidth()/2;
+            x = maxX-bitmap.getWidth();
             y = minY;
         }
 
-        //Adding the top, left, bottom and right to the rect object
-        detectCollision.left = x ;
+        detectCollision.left = x;
         detectCollision.top = y + bitmap.getHeight()/2;
         detectCollision.right = x + bitmap.getWidth();
         detectCollision.bottom = y + bitmap.getHeight();
     }
 
-    //adding a setter to x coordinate so that we can change it after collision
     public void setY(int y){
         this.y = y;
     }
 
-    //one more getter for getting the rect object
     public Rect getDetectCollision() {
         return detectCollision;
     }
 
-    //getters
     public Bitmap getBitmap() {
         return bitmap;
     }
